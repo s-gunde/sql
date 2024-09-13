@@ -1,10 +1,8 @@
 --SELECT
 /* 1. Write a query that returns everything in the customer table. */
-
 SELECT *
 FROM customer
 
-Output:
 1	Alejandro	Costa	M8Y
 2	Mei	Chen	M1L
 3	Amir	Khan	M4H
