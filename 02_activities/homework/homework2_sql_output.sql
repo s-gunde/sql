@@ -6114,6 +6114,7 @@ FROM product
 /* 1. Write a query that INNER JOINs the vendor table to the vendor_booth_assignments table on the 
 vendor_id field they both have in common, and sorts the result by vendor_name, then market_date. */
 SELECT *
+--SELECT vendor.*, vendor_booth_assignments.booth_number, vendor_booth_assignments.market_date
 FROM vendor
 JOIN vendor_booth_assignments
 ON vendor.vendor_id = vendor_booth_assignments.vendor_id
@@ -7046,6 +7047,7 @@ Execution finished without errors.
 Result: 921 rows returned in 20ms
 At line 1:
 SELECT *
+--SELECT vendor.*, vendor_booth_assignments.booth_number, vendor_booth_assignments.market_date
 FROM vendor
 JOIN vendor_booth_assignments
 ON vendor.vendor_id = vendor_booth_assignments.vendor_id
