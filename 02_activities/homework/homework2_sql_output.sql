@@ -5993,3 +5993,1052 @@ At line 5:
 SELECT *, (quantity * cost_to_customer_per_qty) as price
 FROM customer_purchases
 WHERE vendor_id BETWEEN 8 AND 10
+
+--CASE
+/* 1. Products can be sold by the individual unit or by bulk measures like lbs. or oz. 
+Using the product table, write a query that outputs the product_id and product_name
+columns and add a column called prod_qty_type_condensed that displays the word “unit” 
+if the product_qty_type is “unit,” and otherwise displays the word “bulk.” */
+SELECT product_id, product_name,
+	   CASE 
+	   WHEN product_qty_type = 'unit' THEN 'unit'
+	   --WHEN product_qty_type IS NULL THEN 'no quantity type available'
+	   ELSE 'bulk'
+	   END AS prod_qty_type_condensed
+FROM product
+
+product_id	product_name	prod_qty_type_condensed
+1	Habanero Peppers - Organic	bulk
+2	Jalapeno Peppers - Organic	bulk
+3	Poblano Peppers - Organic	unit
+4	Banana Peppers - Jar	unit
+5	Whole Wheat Bread	unit
+6	Cut Zinnias Bouquet	unit
+7	Apple Pie	unit
+9	Sweet Potatoes	bulk
+10	Eggs	unit
+11	Pork Chops	bulk
+12	Baby Salad Lettuce Mix - Bag	unit
+13	Baby Salad Lettuce Mix	bulk
+14	Red Potatoes	bulk
+15	Red Potatoes - Small	bulk
+16	Sweet Corn	unit
+17	Carrots	bulk
+18	Carrots - Organic	unit
+19	Farmer''s Market Resuable Shopping Bag	unit --extra quote added as a escape sequence
+20	Homemade Beeswax Candles	unit
+21	Organic Cherry Tomatoes	unit
+22	Roma Tomatoes	bulk
+23	Maple Syrup - Jar	unit
+8	Cherry Pie	unit
+
+Execution finished without errors.
+Result: 23 rows returned in 14ms
+At line 1:
+SELECT product_id, product_name,
+	   CASE 
+	   WHEN product_qty_type = 'unit' THEN 'unit'
+	   --WHEN product_qty_type IS NULL THEN 'no quantity type available'
+	   ELSE 'bulk'
+	   END AS prod_qty_type_condensed
+FROM product
+
+
+/* 2. We want to flag all of the different types of pepper products that are sold at the market. 
+add a column to the previous query called pepper_flag that outputs a 1 if the product_name 
+contains the word “pepper” (regardless of capitalization), and otherwise outputs 0. */
+SELECT product_id, product_name,
+	   CASE 
+	   WHEN product_qty_type = 'unit' THEN 'unit'
+	   --WHEN product_qty_type IS NULL THEN 'no quantity type available'
+	   ELSE 'bulk'
+	   END AS prod_qty_type_condensed,
+	   
+	   CASE
+	   WHEN product_name LIKE '%pepper%' THEN 1
+	   ELSE 0
+	   END AS pepper_flag
+FROM product
+
+product_id	product_name	prod_qty_type_condensed	pepper_flag
+1	Habanero Peppers - Organic	bulk	1
+2	Jalapeno Peppers - Organic	bulk	1
+3	Poblano Peppers - Organic	unit	1
+4	Banana Peppers - Jar	unit	1
+5	Whole Wheat Bread	unit	0
+6	Cut Zinnias Bouquet	unit	0
+7	Apple Pie	unit	0
+9	Sweet Potatoes	bulk	0
+10	Eggs	unit	0
+11	Pork Chops	bulk	0
+12	Baby Salad Lettuce Mix - Bag	unit	0
+13	Baby Salad Lettuce Mix	bulk	0
+14	Red Potatoes	bulk	0
+15	Red Potatoes - Small	bulk	0
+16	Sweet Corn	unit	0
+17	Carrots	bulk	0
+18	Carrots - Organic	unit	0
+19	Farmer''s Market Resuable Shopping Bag	unit	0  --extra quote added as a escape sequence
+20	Homemade Beeswax Candles	unit	0
+21	Organic Cherry Tomatoes	unit	0
+22	Roma Tomatoes	bulk	0
+23	Maple Syrup - Jar	unit	0
+8	Cherry Pie	unit	0
+
+Execution finished without errors.
+Result: 23 rows returned in 16ms
+At line 1:
+SELECT product_id, product_name,
+	   CASE 
+	   WHEN product_qty_type = 'unit' THEN 'unit'
+	   --WHEN product_qty_type IS NULL THEN 'no quantity type available'
+	   ELSE 'bulk'
+	   END AS prod_qty_type_condensed,
+	   
+	   CASE
+	   WHEN product_name LIKE '%pepper%' THEN 1
+	   ELSE 0
+	   END AS pepper_flag
+FROM product
+
+
+--JOIN
+/* 1. Write a query that INNER JOINs the vendor table to the vendor_booth_assignments table on the 
+vendor_id field they both have in common, and sorts the result by vendor_name, then market_date. */
+SELECT *
+FROM vendor
+JOIN vendor_booth_assignments
+ON vendor.vendor_id = vendor_booth_assignments.vendor_id
+ORDER BY vendor.vendor_name, vendor_booth_assignments.market_date
+
+vendor_id	vendor_name	vendor_type	vendor_owner_first_name	vendor_owner_last_name	vendor_id	booth_number	market_date
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-04-05
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-04-08
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-04-12
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-04-15
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-04-19
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-04-22
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-04-26
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-04-29
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-03
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-06
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-10
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-13
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-17
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-20
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-24
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-27
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-05-31
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-06-03
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-06-07
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-06-10
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-06-14
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-06-17
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-06-21
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-06-24
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-06-28
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-07-01
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-07-05
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-07-08
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-07-12
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-07-15
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-07-19
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-07-22
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-07-26
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-07-29
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-02
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-05
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-09
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-12
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-16
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-19
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-23
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-26
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-08-30
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-02
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-06
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-09
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-13
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-16
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-20
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-23
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-27
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2022-09-30
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-10-04
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-10-07
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-10-11
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-10-14
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-10-18
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-10-21
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-10-25
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-10-28
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-01
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-04
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-08
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-11
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-15
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-18
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-22
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-25
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-11-29
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-02
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-06
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-09
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-13
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-16
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-20
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-23
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-27
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2022-12-30
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-03-07
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-03-10
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-03-14
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-03-17
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-03-21
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-03-24
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-03-28
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-03-31
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-04-04
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-04-07
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-04-11
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-04-14
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-04-18
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-04-21
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-04-25
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-04-28
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-02
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-05
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-09
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-12
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-16
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-19
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-23
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-26
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-05-30
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-02
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-06
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-09
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-13
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-16
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-20
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-23
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-27
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-06-30
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-07-04
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-07-07
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-07-11
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-07-14
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-07-18
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-07-21
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-07-25
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-07-28
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-01
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-04
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-08
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-11
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-15
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-18
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-22
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-25
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-08-29
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-01
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-05
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-08
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-12
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-15
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-19
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-22
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-26
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-09-29
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	10	2023-10-03
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-10-06
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	6	2023-10-10
+8	Annie's Pies	Prepared Foods	Annie	Aquinas	8	7	2023-10-13
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-04-05
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-04-08
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	7	2022-04-12
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-04-15
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-04-19
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-04-22
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-04-26
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-04-29
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-03
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-06
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-10
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-13
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-17
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-20
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-24
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-27
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-05-31
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-06-03
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-06-07
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-06-10
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-06-14
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-06-17
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-06-21
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-06-24
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-06-28
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-01
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-05
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-08
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-12
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-15
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-19
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-22
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-26
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-07-29
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-02
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-05
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-09
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-12
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-16
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-19
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-23
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-26
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-08-30
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-02
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-06
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-09
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-13
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-16
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-20
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-23
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-27
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-09-30
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-10-04
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-10-07
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-10-11
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-10-14
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-10-18
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-10-21
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-10-25
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-10-28
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-01
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-04
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-08
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-11
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-15
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-18
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-22
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-25
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-11-29
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-02
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-06
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-09
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-13
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-16
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-20
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-23
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-27
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2022-12-30
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-03-07
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-03-10
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-03-14
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-03-17
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-03-21
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-03-24
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-03-28
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-03-31
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-04-04
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-04-07
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-04-11
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-04-14
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-04-18
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-04-21
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-04-25
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-04-28
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-02
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-05
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-09
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-12
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-16
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-19
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-23
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-26
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-05-30
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-02
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-06
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-09
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-13
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-16
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-20
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-23
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-27
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-06-30
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-07-04
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-07-07
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-07-11
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-07-14
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-07-18
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-07-21
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-07-25
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-07-28
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-01
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-04
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-08
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-11
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-15
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-18
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-22
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-25
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-08-29
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-01
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-05
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-08
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-12
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-15
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-19
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-22
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-26
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-09-29
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-10-03
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-10-06
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-10-10
+1	Chris's Sustainable Eggs & Meats	Eggs & Meats	Chris	Sylvan	1	2	2023-10-13
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-04-05
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-04-08
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	2	2022-04-12
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-04-15
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-04-19
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-04-22
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-04-26
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-04-29
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-03
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-06
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-10
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-13
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-17
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-20
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-24
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-27
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-05-31
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-06-03
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-06-03
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-06-07
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-06-07
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-06-10
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-06-10
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-06-14
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-06-14
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-06-17
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-06-17
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-06-21
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-06-21
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-06-24
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-06-24
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-06-28
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-06-28
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-01
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-01
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-05
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-05
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-08
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-08
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-12
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-12
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-15
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-15
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-19
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-19
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-22
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-22
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-26
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-26
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-07-29
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-07-29
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-02
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-02
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-05
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-05
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-09
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-09
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-12
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-12
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-16
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-16
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-19
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-19
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-23
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-23
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-26
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-26
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-08-30
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-08-30
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-02
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-02
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-06
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-06
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-09
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-09
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-13
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-13
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-16
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-16
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-20
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-20
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-23
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-23
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-27
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-27
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-09-30
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2022-09-30
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-10-04
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-10-07
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-10-11
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-10-14
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-10-18
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-10-21
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-10-25
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-10-28
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-01
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-04
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-08
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-11
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-15
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-18
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-22
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-25
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-11-29
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-02
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-06
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-09
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-13
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-16
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-20
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-23
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-27
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2022-12-30
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-03-07
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-03-10
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-03-14
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-03-17
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-03-21
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-03-24
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-03-28
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-03-31
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-04-04
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-04-07
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-04-11
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-04-14
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-04-18
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-04-21
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-04-25
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-04-28
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-02
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-05
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-09
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-12
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-16
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-19
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-23
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-26
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-05-30
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-02
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-06
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-06-06
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-09
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-06-09
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-13
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-06-13
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-16
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-06-16
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-20
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-06-20
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-23
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-06-23
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-27
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-06-27
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-06-30
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-06-30
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-07-04
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-07-04
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-07-07
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-07-07
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-07-11
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-07-11
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-07-14
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-07-14
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-07-18
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-07-18
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-07-21
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-07-21
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-07-25
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-07-25
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-07-28
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-07-28
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-01
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-01
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-04
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-04
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-08
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-08
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-11
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-11
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-15
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-15
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-18
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-18
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-22
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-22
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-25
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-25
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-08-29
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-08-29
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-01
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-01
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-05
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-05
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-08
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-08
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-12
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-12
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-15
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-15
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-19
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-19
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-22
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-22
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-26
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-26
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-09-29
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-09-29
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-10-03
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	11	2023-10-03
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-10-06
+4	Fields of Corn	Fresh Focused	Samuel	Smith	4	7	2023-10-10
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-04-05
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-04-08
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-04-12
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-04-15
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-04-19
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-04-22
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-04-26
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-04-29
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-03
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-06
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-10
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-13
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-17
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-20
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-24
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-27
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-05-31
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-06-03
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-06-07
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-06-10
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-06-14
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-06-17
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-06-21
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-06-24
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-06-28
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-01
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-05
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-08
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-12
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-15
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-19
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-22
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-26
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-07-29
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-02
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-05
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-09
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-12
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-16
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-19
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-23
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-26
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-08-30
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-02
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-06
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-09
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-13
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-16
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-20
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-23
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-27
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-09-30
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-10-04
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-10-07
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-10-11
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-10-14
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-10-18
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-10-21
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-10-25
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-10-28
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-01
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-04
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-08
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-11
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-15
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-18
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-22
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-25
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-11-29
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-02
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-06
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-09
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-13
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-16
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-20
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-23
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-27
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2022-12-30
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-03-07
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-03-10
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-03-14
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-03-17
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-03-21
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-03-24
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-03-28
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-03-31
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-04-04
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-04-07
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-04-11
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-04-14
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-04-18
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-04-21
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-04-25
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-04-28
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-02
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-05
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-09
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-12
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-16
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-19
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-23
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-26
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-05-30
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-02
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-06
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-09
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-13
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-16
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-20
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-23
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-27
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-06-30
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-07-04
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-07-07
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-07-11
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-07-14
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-07-18
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-07-21
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-07-25
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-07-28
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-01
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-04
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-08
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-11
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-15
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-18
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-22
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-25
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-08-29
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-01
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-05
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-08
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-12
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-15
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-19
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-22
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-26
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-09-29
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-10-03
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-10-06
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-10-10
+7	Marco's Peppers	Fresh Focused	Marco	Bokashi	7	11	2023-10-13
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-04-05
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-04-08
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-04-12
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-04-15
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-04-19
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-04-22
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-04-26
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-04-29
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-03
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-06
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-10
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-13
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-17
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-20
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-24
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-27
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-05-31
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-06-03
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-06-07
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-06-10
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-06-14
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-06-17
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-06-21
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-06-24
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-06-28
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-01
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-05
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-08
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-12
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-15
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-19
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-22
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-26
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-07-29
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-02
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-05
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-09
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-12
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-16
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-19
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-23
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-26
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-08-30
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-02
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-06
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-09
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-13
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-16
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-20
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-23
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-27
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-09-30
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-10-04
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-10-07
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-10-11
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-10-14
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-10-18
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-10-21
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-10-25
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-10-28
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-01
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-04
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-08
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-11
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-15
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-18
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-22
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-25
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-11-29
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-02
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-06
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-09
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-13
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-16
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-20
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-23
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-27
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2022-12-30
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-03-07
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-03-10
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-03-14
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-03-17
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-03-21
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-03-24
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-03-28
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-03-31
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-04-04
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-04-07
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-04-11
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-04-14
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-04-18
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-04-21
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-04-25
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-04-28
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-02
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-05
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-09
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-12
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-16
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-19
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-23
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-26
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-05-30
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-02
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-06
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-09
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-13
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-16
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-20
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-23
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-27
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-06-30
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-07-04
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-07-07
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-07-11
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-07-14
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-07-18
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-07-21
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-07-25
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-07-28
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-01
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-04
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-08
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-11
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-15
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-18
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-22
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-25
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-08-29
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-01
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-05
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-08
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-12
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-15
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-19
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-22
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-26
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-09-29
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-10-03
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-10-06
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-10-10
+9	Mediterranean Bakery	Prepared Foods	Kani	Hardi	9	8	2023-10-13
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-04-05
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-04-08
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-04-12
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-04-15
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-04-19
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-04-22
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-04-26
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-04-29
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-03
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-06
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-10
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-13
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-17
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-20
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-24
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-27
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-05-31
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-06-03
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-06-07
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-06-10
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-06-14
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-06-17
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-06-21
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-06-24
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-06-28
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-01
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-05
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-08
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-12
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-15
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-19
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-22
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-26
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-07-29
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-02
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-05
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-09
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-12
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-16
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-19
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-23
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-26
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-08-30
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-02
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-06
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-09
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-13
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-16
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-20
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-23
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-27
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-09-30
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-10-04
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-10-07
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-10-11
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-10-14
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-10-18
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-10-21
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-10-25
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-10-28
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-01
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-04
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-08
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-11
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-15
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-18
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-22
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-25
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-11-29
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-02
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-06
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-09
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-13
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-16
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-20
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-23
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-27
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2022-12-30
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-03-07
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-03-10
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-03-14
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-03-17
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-03-21
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-03-24
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-03-28
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-03-31
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-04-04
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-04-07
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-04-11
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-04-14
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-04-18
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-04-21
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-04-25
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-04-28
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-02
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-05
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-09
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-12
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-16
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-19
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-23
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-26
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-05-30
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-02
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-06
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-09
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-13
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-16
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-20
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-23
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-27
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-06-30
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-07-04
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-07-07
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-07-11
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-07-14
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-07-18
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-07-21
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-07-25
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-07-28
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-01
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-04
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-08
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-11
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-15
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-18
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-22
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-25
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-08-29
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-01
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-05
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-08
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-12
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-15
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-19
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-22
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-26
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-09-29
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-10-03
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-10-06
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-10-10
+3	Mountain View Vegetables	Fresh Variety: Veggies & More	Joseph	Yoder	3	1	2023-10-13
+
+Execution finished without errors.
+Result: 921 rows returned in 20ms
+At line 1:
+SELECT *
+FROM vendor
+JOIN vendor_booth_assignments
+ON vendor.vendor_id = vendor_booth_assignments.vendor_id
+ORDER BY vendor.vendor_name, vendor_booth_assignments.market_date
