@@ -2091,6 +2091,8 @@ SELECT *
 FROM customer_purchases
 WHERE product_id IN (4,9)
 
+	
+
 /*2. Write a query that returns all customer purchases and a new calculated column 'price' (quantity * cost_to_customer_per_qty), 
 filtered by vendor IDs between 8 and 10 (inclusive) using either:
 	1.  two conditions using AND
@@ -5998,6 +6000,8 @@ SELECT *, (quantity * cost_to_customer_per_qty) as price
 FROM customer_purchases
 WHERE vendor_id BETWEEN 8 AND 10
 
+
+	
 --CASE
 /* 1. Products can be sold by the individual unit or by bulk measures like lbs. or oz. 
 Using the product table, write a query that outputs the product_id and product_name
