@@ -4,6 +4,7 @@ SELECT *
 FROM customer
 
 
+
 /* 2. Write a query that displays all of the columns and 10 rows from the customer table, 
 sorted by customer_last_name, then customer_first_ name. */
 SELECT *
@@ -24,6 +25,8 @@ WHERE product_id = 4 OR product_id = 9
 SELECT *
 FROM customer_purchases
 WHERE product_id IN (4,9)
+
+
 
 /*2. Write a query that returns all customer purchases and a new calculated column 'price' (quantity * cost_to_customer_per_qty), 
 filtered by vendor IDs between 8 and 10 (inclusive) using either:
@@ -55,8 +58,6 @@ SELECT product_id, product_name,
 	   END AS prod_qty_type_condensed
 FROM product
   
-
-
 /* 2. We want to flag all of the different types of pepper products that are sold at the market. 
 add a column to the previous query called pepper_flag that outputs a 1 if the product_name 
 contains the word “pepper” (regardless of capitalization), and otherwise outputs 0. */
@@ -72,7 +73,6 @@ SELECT product_id, product_name,
 	   ELSE 0
 	   END AS pepper_flag
 FROM product
-
 
 
 

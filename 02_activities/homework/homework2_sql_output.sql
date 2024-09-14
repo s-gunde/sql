@@ -36,6 +36,8 @@ At line 1:
 SELECT *
 FROM customer
 
+
+
 /* 2. Write a query that displays all of the columns and 10 rows from the customer table, 
 sorted by customer_last_name, then customer_first_ name. */
 SELECT *
@@ -62,6 +64,8 @@ SELECT *
 FROM customer
 ORDER BY customer_last_name, customer_first_name
 LIMIT 10
+
+
 
 --WHERE
 /* 1. Write a query that returns all customer purchases of product IDs 4 and 9. */
