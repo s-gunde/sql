@@ -11,7 +11,7 @@ sticker to everyone who has ever spent more than $2000 at the market. Write a qu
 of customers for them to give stickers to, sorted by last name, then first name. 
 
 HINT: This query requires you to join two tables, use an aggregate function, and use the HAVING keyword. */
-SELECT customer.customer_id, customer.customer_first_name, customer.customer_last_name, SUM(customer_purchases.cost_to_customer_per_qty) as total_amount_spent
+SELECT customer.customer_id, customer.customer_first_name, customer.customer_last_name, ROUND(SUM( quantity * cost_to_customer_per_qty),2) AS total_spent
 FROM customer
 JOIN customer_purchases
 ON customer.customer_id = customer_purchases.customer_id
@@ -56,6 +56,10 @@ VALUES (10, "Thomas Superfood Store", "Fresh Focused", "Thomas", "Rosenthal")
 
 HINT: you might need to search for strfrtime modifers sqlite on the web to know what the modifers for month 
 and year are! */
+SELECT customer_id, strftime('%m', market_date) as month, strftime('%Y', market_date) as year
+--,product_id, cost_to_customer_per_qty
+FROM customer_purchases
+
 
 /* 2. Using the previous query as a base, determine how much money each customer spent in April 2022. 
 Remember that money spent is quantity*cost_to_customer_per_qty. 
@@ -63,3 +67,7 @@ Remember that money spent is quantity*cost_to_customer_per_qty.
 HINTS: you will need to AGGREGATE, GROUP BY, and filter...
 but remember, STRFTIME returns a STRING for your WHERE statement!! */
 
+SELECT customer_id, ROUND(SUM( quantity * cost_to_customer_per_qty),2) AS total_spent
+FROM customer_purchases
+WHERE strftime('%Y-%m',market_date) = '2022-07'
+GROUP BY customer_id
