@@ -1,7 +1,9 @@
 -- AGGREGATE
 /* 1. Write a query that determines how many times each vendor has rented a booth 
 at the farmer’s market by counting the vendor booth assignments per vendor_id. */
-
+SELECT vendor_id, COUNT(booth_number) as times_booth_rented
+FROM vendor_booth_assignments
+GROUP BY vendor_id
 
 
 /* 2. The Farmer’s Market Customer Appreciation Committee wants to give a bumper 
