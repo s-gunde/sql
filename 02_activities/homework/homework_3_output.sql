@@ -27,28 +27,44 @@ sticker to everyone who has ever spent more than $2000 at the market. Write a qu
 of customers for them to give stickers to, sorted by last name, then first name. 
 
 HINT: This query requires you to join two tables, use an aggregate function, and use the HAVING keyword. */
-SELECT customer.customer_id, customer.customer_first_name, customer.customer_last_name, ROUND(SUM( quantity * cost_to_customer_per_qty),2) AS total_spent
+SELECT customer.customer_id, customer.customer_first_name, customer.customer_last_name, ROUND(SUM(quantity * cost_to_customer_per_qty),2) AS total_spent
 FROM customer
 JOIN customer_purchases
 ON customer.customer_id = customer_purchases.customer_id
 GROUP BY customer_purchases.customer_id
-HAVING SUM(customer_purchases.cost_to_customer_per_qty) >  2000
+HAVING SUM(quantity * cost_to_customer_per_qty) >  2000
 ORDER BY customer.customer_last_name, customer.customer_first_name
 
 customer_id	customer_first_name	customer_last_name	total_spent
+4	Leyla	Abadi	3561.63
+7	Anwar	Ali	2921.17
+12	Jalen	Carter	3290.08
 2	Mei	Chen	4179.45
+23	Jessica	Connor	2383.58
+1	Alejandro	Costa	3530.92
+26	Richard	Côté	2375.74
+25	Lea	Fischer	2239.55
 3	Amir	Khan	3832.16
+16	Iva	Kienzler	2015.0
+8	Khaled	Naser	3403.68
+24	Dylan	O''Connor	2817.01 --added extra quote as a escape sequence
+9	Zuri	Okoro	3015.73
+10	Taylor	Park	2495.41
+11	Sofia	Petrov	3499.99
+6	Sofia	Rodríguez	3016.47
+14	Jack	Wise	2322.54
 5	Hiro	Yamamoto	3932.83
+22	Julio	da Silva	2192.15
 
 Execution finished without errors.
-Result: 3 rows returned in 19ms
+Result: 19 rows returned in 16ms
 At line 1:
-SELECT customer.customer_id, customer.customer_first_name, customer.customer_last_name, ROUND(SUM( quantity * cost_to_customer_per_qty),2) AS total_spent
+SELECT customer.customer_id, customer.customer_first_name, customer.customer_last_name, ROUND(SUM(quantity * cost_to_customer_per_qty),2) AS total_spent
 FROM customer
 JOIN customer_purchases
 ON customer.customer_id = customer_purchases.customer_id
 GROUP BY customer_purchases.customer_id
-HAVING SUM(customer_purchases.cost_to_customer_per_qty) >  2000
+HAVING SUM(quantity * cost_to_customer_per_qty) >  2000
 ORDER BY customer.customer_last_name, customer.customer_first_name
 
 
@@ -112,11 +128,12 @@ FROM temp.new_vendor
 
 HINT: you might need to search for strfrtime modifers sqlite on the web to know what the modifers for month 
 and year are! */
-SELECT customer_id, strftime('%m', market_date) as month, strftime('%Y', market_date) as year
+SELECT customer_id, strftime('%m', market_date) as purchase_month, strftime('%Y', market_date) as purchase_year
 --,product_id, cost_to_customer_per_qty
 FROM customer_purchases
 
-customer_id	month	year
+
+customer_id	purchase_month	purchase_year
 14	07	2022
 14	07	2022
 15	07	2022
@@ -4340,9 +4357,9 @@ customer_id	month	year
 18	10	2023
 
 Execution finished without errors.
-Result: 4221 rows returned in 16ms
-At line 4:
-SELECT customer_id, strftime('%m', market_date) as month, strftime('%Y', market_date) as year
+Result: 4221 rows returned in 17ms
+At line 1:
+SELECT customer_id, strftime('%m', market_date) as purchase_month, strftime('%Y', market_date) as purchase_year
 --,product_id, cost_to_customer_per_qty
 FROM customer_purchases
 
@@ -4354,41 +4371,40 @@ but remember, STRFTIME returns a STRING for your WHERE statement!! */
 
 SELECT customer_id, ROUND(SUM( quantity * cost_to_customer_per_qty),2) AS total_spent
 FROM customer_purchases
-WHERE strftime('%Y-%m',market_date) = '2022-07'
+WHERE strftime('%Y-%m',market_date) = '2022-04'
 GROUP BY customer_id
 
 customer_id	total_spent
-1	367.91
-2	381.05
-3	276.52
-4	164.38
-5	125.19
-6	286.55
-7	136.41
-8	303.44
-9	138.0
-10	221.83
-11	220.09
-12	287.58
-13	94.36
-14	114.49
-15	76.83
-16	152.96
-17	101.52
-18	137.19
-19	65.53
-20	33.82
-21	65.51
-22	17.55
-23	117.94
-24	340.97
-25	95.0
-26	243.66
+1	152.0
+2	172.5
+3	152.0
+4	156.5
+5	161.0
+6	144.5
+7	85.5
+8	207.0
+9	178.0
+10	149.0
+11	203.5
+12	262.0
+13	82.0
+14	196.0
+15	72.0
+16	57.0
+17	49.5
+18	132.5
+19	18.0
+20	129.0
+21	129.0
+22	90.0
+23	325.0
+25	168.0
+26	194.5
 
 Execution finished without errors.
-Result: 26 rows returned in 14ms
-At line 4:
+Result: 25 rows returned in 10ms
+At line 1:
 SELECT customer_id, ROUND(SUM( quantity * cost_to_customer_per_qty),2) AS total_spent
 FROM customer_purchases
-WHERE strftime('%Y-%m',market_date) = '2022-07'
+WHERE strftime('%Y-%m',market_date) = '2022-04'
 GROUP BY customer_id
