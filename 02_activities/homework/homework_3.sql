@@ -31,6 +31,23 @@ When inserting the new vendor, you need to appropriately align the columns to be
 -> To insert the new row use VALUES, specifying the value you want for each column:
 VALUES(col1,col2,col3,col4,col5) 
 */
+SELECT * 
+FROM vendor --run this query to see columns setup in vendor table to create temp table)
+
+--create a temporary table
+CREATE TEMPORARY TABLE temp.new_vendor AS
+SELECT * FROM vendor
+
+--DROP TABLE temp.new_vendor
+
+--verify everything is copied correctly to temp table
+SELECT * 
+FROM temp.new_vendor
+
+--insert a new value
+INSERT INTO temp.new_vendor 
+VALUES (10, "Thomas Superfood Store", "Fresh Focused", "Thomas", "Rosenthal")
+
 
 
 
