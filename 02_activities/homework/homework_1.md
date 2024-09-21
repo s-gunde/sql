@@ -76,3 +76,17 @@ Please do not pick the exact same tables that I have already diagramed. For exam
 	-  ![01_farmers_market_conceptual_model.png](./images/01_farmers_market_conceptual_model.png)
 - The column names can be found in a few spots (DB Schema window in the bottom right, the Database Structure tab in the main window by expanding each table entry, at the top of the Browse Data tab in the main window)
 
+
+**Answer:** I worked on the customer_purchases and vendor_inventory tables. 
+
+Based on my analysis, there is no primary key (PK) in the customer_purchases table.
+
+However, the combination of customer_id, market_date provides the unique set products purchased on a single day.  Similarly, in the vendor_inventory table, the combination of vendor_id and market_date creates a unique set of products have inventory on a single day, as no primary key is explicitly defined here either.
+
+The relationship is **many-to-many**:
+
+A single customer on a particular market_date can purchase multiple products from various vendors.
+
+A single vendor can sell different products to multiple customers on the same market_date.
+
+![homework_1_ER.jpg.jpg](./images/homework_1_ER.jpg.jpg) 
