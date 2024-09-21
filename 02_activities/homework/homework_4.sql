@@ -8,7 +8,6 @@ SELECT
 product_name || ', ' || product_size|| ' (' || product_qty_type || ')'
 FROM product
 
-
 But wait! The product table has some bad data (a few NULL values). 
 Find the NULLs and then using COALESCE, replace the NULL with a 
 blank for the first problem, and 'unit' for the second problem. 
@@ -32,8 +31,6 @@ FROM product
 	
 
 
-
-
 --Windowed Functions
 /* 1. Write a query that selects from the customer_purchases table and numbers each customer’s  
 visits to the farmer’s market (labeling each market date with a different number). 
@@ -43,6 +40,21 @@ You can either display all rows in the customer_purchases table, with the counte
 each new market date for each customer, or select only the unique market dates per customer 
 (without purchase details) and number those visits. 
 HINT: One of these approaches uses ROW_NUMBER() and one uses DENSE_RANK(). */
+
+--displaying customer unique visits to market
+SELECT DISTINCT customer_id, market_date
+FROM customer_purchases
+ORDER BY customer_id, market_date
+
+--assigned ranking for customer market visits with including cases with ties and no ties
+SELECT customer_id, market_date, DENSE_RANK() OVER (PARTITION BY customer_id ORDER BY market_date) AS tied_customer_visits_ranking, 
+ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY market_date) AS no_tied_customer_visits_ranking
+FROM customer_purchases 
+
+--assigned ranking for customer unique visits
+SELECT DISTINCT customer_id, market_date, DENSE_RANK() OVER (PARTITION BY customer_id ORDER BY market_date) AS unique_market_visits
+FROM customer_purchases
+
 
 
 /* 2. Reverse the numbering of the query from a part so each customer’s most recent visit is labeled 1, 
