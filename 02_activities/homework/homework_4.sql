@@ -106,11 +106,42 @@ WHERE product_size REGEXP '[0-9]'
 /* 1. Using a UNION, write a query that displays the market dates with the highest and lowest total sales.
 
 HINT: There are a possibly a few ways to do this query, but if you're struggling, try the following: 
-1) Create a CTE/Temp Table to find sales values grouped dates; 
+1) Create a CTE/Temp Table to find sales values grouped dates;
 2) Create another CTE/Temp table with a rank windowed function on the previous query to create 
 "best day" and "worst day"; 
 3) Query the second temp table twice, once for the best day, once for the worst day, 
 with a UNION binding them. */
+
+--1) Create a CTE/Temp Table to find sales values grouped dates;
+DROP TABLE IF EXISTS temp_sales_by_date
+
+CREATE TEMP TABLE temp_sales_by_date AS
+SELECT market_date, ROUND (SUM(quantity * cost_to_customer_per_qty),2) AS sales
+FROM customer_purchases
+GROUP BY market_date
+ORDER BY market_date
+
+SELECT * FROM temp_sales_by_date
+
+--2) Create another CTE/Temp table with a rank windowed function on the previous query to create "best day" and "worst day"; 
+DROP TABLE IF EXISTS temp_ranked_sales
+
+CREATE TEMP TABLE temp_ranked_sales AS
+SELECT market_date, sales, RANK() OVER (ORDER BY sales DESC) AS sales_rank,
+CASE
+        WHEN RANK() OVER (ORDER BY sales DESC) = 1 THEN 'best day'
+        WHEN RANK() OVER (ORDER BY sales DESC) = COUNT(market_date) OVER () THEN 'worst day'
+        ELSE 'normal day'
+    END AS day_description
+FROM temp_sales_by_date
+
+SELECT * FROM temp_ranked_sales
+
+--3) Query the second temp table twice, once for the best day, once for the worst day, with a UNION binding them. 
+SELECT * FROM temp_ranked_sales WHERE day_description = 'best day'
+UNION
+SELECT * FROM temp_ranked_sales WHERE day_description = 'worst day'
+
 
 
 

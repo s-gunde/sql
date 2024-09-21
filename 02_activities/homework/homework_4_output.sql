@@ -8689,3 +8689,355 @@ SELECT product_name, product_size, IIF(INSTR(product_name, '-')= 0, NULL, TRIM(S
 FROM product
 WHERE product_size REGEXP '[0-9]'
 
+
+
+ UNION
+/* 1. Using a UNION, write a query that displays the market dates with the highest and lowest total sales.
+
+HINT: There are a possibly a few ways to do this query, but if you're struggling, try the following: 
+1) Create a CTE/Temp Table to find sales values grouped dates;
+2) Create another CTE/Temp table with a rank windowed function on the previous query to create 
+"best day" and "worst day"; 
+3) Query the second temp table twice, once for the best day, once for the worst day, 
+with a UNION binding them. */
+
+--1) Create a CTE/Temp Table to find sales values grouped dates;
+
+DROP TABLE IF EXISTS temp_sales_by_date
+
+CREATE TEMP TABLE temp_sales_by_date AS
+SELECT market_date, ROUND (SUM(quantity * cost_to_customer_per_qty),2) AS sales
+FROM customer_purchases
+GROUP BY market_date
+ORDER BY market_date
+
+SELECT * FROM temp_sales_by_date
+
+market_date	sales
+2022-04-05	475.0
+2022-04-08	549.5
+2022-04-12	505.0
+2022-04-15	377.0
+2022-04-19	493.5
+2022-04-22	455.5
+2022-04-26	366.0
+2022-04-29	444.5
+2022-05-03	523.0
+2022-05-06	497.0
+2022-05-10	494.5
+2022-05-13	480.0
+2022-05-17	432.5
+2022-05-20	487.5
+2022-05-24	496.0
+2022-05-27	384.5
+2022-05-31	633.0
+2022-06-03	492.1
+2022-06-07	370.5
+2022-06-10	449.0
+2022-06-14	513.7
+2022-06-17	571.5
+2022-06-21	428.7
+2022-06-24	440.5
+2022-06-28	468.1
+2022-07-01	583.6
+2022-07-05	494.77
+2022-07-08	519.61
+2022-07-12	426.22
+2022-07-15	468.38
+2022-07-19	547.97
+2022-07-22	518.3
+2022-07-26	396.54
+2022-07-29	610.9
+2022-08-02	375.83
+2022-08-05	450.89
+2022-08-09	445.61
+2022-08-12	425.17
+2022-08-16	560.47
+2022-08-19	470.52
+2022-08-23	336.91
+2022-08-26	475.34
+2022-08-30	547.65
+2022-09-02	551.14
+2022-09-06	458.09
+2022-09-09	381.05
+2022-09-13	535.79
+2022-09-16	591.52
+2022-09-20	419.36
+2022-09-23	415.68
+2022-09-27	429.37
+2022-09-30	471.67
+2022-10-04	495.0
+2022-10-07	517.5
+2022-10-11	455.5
+2022-10-14	509.5
+2022-10-18	448.0
+2022-10-21	593.0
+2022-10-25	498.0
+2022-10-28	518.5
+2022-11-01	486.0
+2022-11-04	521.0
+2022-11-08	482.5
+2022-11-11	458.5
+2022-11-15	416.5
+2022-11-18	732.5
+2022-11-22	856.5
+2022-11-25	793.0
+2022-11-29	598.0
+2022-12-02	742.5
+2022-12-06	525.0
+2022-12-09	573.5
+2022-12-13	472.5
+2022-12-16	448.5
+2022-12-20	979.0
+2022-12-23	757.5
+2022-12-27	781.5
+2022-12-30	841.0
+2023-03-07	364.5
+2023-03-10	492.5
+2023-03-14	514.5
+2023-03-17	429.0
+2023-03-21	545.5
+2023-03-24	453.5
+2023-03-28	477.5
+2023-03-31	456.0
+2023-04-04	349.0
+2023-04-07	272.5
+2023-04-11	379.0
+2023-04-14	342.0
+2023-04-18	310.5
+2023-04-21	283.0
+2023-04-25	406.5
+2023-04-28	305.5
+2023-05-02	374.0
+2023-05-05	466.5
+2023-05-09	513.5
+2023-05-12	581.0
+2023-05-16	379.5
+2023-05-19	440.0
+2023-05-23	430.5
+2023-05-26	368.5
+2023-05-30	441.0
+2023-06-02	514.0
+2023-06-06	398.0
+2023-06-09	500.5
+2023-06-13	482.0
+2023-06-16	522.5
+2023-06-20	476.1
+2023-06-23	403.5
+2023-06-27	519.6
+2023-06-30	520.9
+2023-07-04	366.25
+2023-07-07	454.58
+2023-07-11	488.7
+2023-07-14	433.6
+2023-07-18	446.96
+2023-07-21	452.09
+2023-07-25	352.19
+2023-07-28	473.85
+2023-08-01	353.66
+2023-08-04	363.62
+2023-08-08	413.43
+2023-08-11	573.78
+2023-08-15	538.33
+2023-08-18	510.56
+2023-08-22	576.42
+2023-08-25	419.5
+2023-08-29	515.58
+2023-09-01	448.41
+2023-09-05	545.23
+2023-09-08	359.85
+2023-09-12	675.38
+2023-09-15	321.12
+2023-09-19	549.37
+2023-09-22	545.42
+2023-09-26	421.22
+2023-09-29	444.7
+2023-10-03	524.26
+2023-10-06	522.0
+2023-10-10	592.5
+2023-10-13	595.0
+
+Execution finished without errors.
+Result: 142 rows returned in 12ms
+At line 19:
+SELECT *
+FROM temp_sales_by_date
+
+--2) Create another CTE/Temp table with a rank windowed function on the previous query to create "best day" and "worst day"; 
+DROP TABLE IF EXISTS temp_ranked_sales
+
+CREATE TEMP TABLE temp_ranked_sales AS
+SELECT market_date, sales, RANK() OVER (ORDER BY sales DESC) AS sales_rank,
+CASE
+        WHEN RANK() OVER (ORDER BY sales DESC) = 1 THEN 'best day'
+        WHEN RANK() OVER (ORDER BY sales DESC) = COUNT(market_date) OVER () THEN 'worst day'
+        ELSE 'normal day'
+    END AS day_description
+FROM temp_sales_by_date
+
+SELECT * FROM temp_ranked_sales
+
+market_date	sales	sales_rank	day_description
+2022-12-20	979.0	1	best day
+2022-11-22	856.5	2	normal day
+2022-12-30	841.0	3	normal day
+2022-11-25	793.0	4	normal day
+2022-12-27	781.5	5	normal day
+2022-12-23	757.5	6	normal day
+2022-12-02	742.5	7	normal day
+2022-11-18	732.5	8	normal day
+2023-09-12	675.38	9	normal day
+2022-05-31	633.0	10	normal day
+2022-07-29	610.9	11	normal day
+2022-11-29	598.0	12	normal day
+2023-10-13	595.0	13	normal day
+2022-10-21	593.0	14	normal day
+2023-10-10	592.5	15	normal day
+2022-09-16	591.52	16	normal day
+2022-07-01	583.6	17	normal day
+2023-05-12	581.0	18	normal day
+2023-08-22	576.42	19	normal day
+2023-08-11	573.78	20	normal day
+2022-12-09	573.5	21	normal day
+2022-06-17	571.5	22	normal day
+2022-08-16	560.47	23	normal day
+2022-09-02	551.14	24	normal day
+2022-04-08	549.5	25	normal day
+2023-09-19	549.37	26	normal day
+2022-07-19	547.97	27	normal day
+2022-08-30	547.65	28	normal day
+2023-03-21	545.5	29	normal day
+2023-09-22	545.42	30	normal day
+2023-09-05	545.23	31	normal day
+2023-08-15	538.33	32	normal day
+2022-09-13	535.79	33	normal day
+2022-12-06	525.0	34	normal day
+2023-10-03	524.26	35	normal day
+2022-05-03	523.0	36	normal day
+2023-06-16	522.5	37	normal day
+2023-10-06	522.0	38	normal day
+2022-11-04	521.0	39	normal day
+2023-06-30	520.9	40	normal day
+2022-07-08	519.61	41	normal day
+2023-06-27	519.6	42	normal day
+2022-10-28	518.5	43	normal day
+2022-07-22	518.3	44	normal day
+2022-10-07	517.5	45	normal day
+2023-08-29	515.58	46	normal day
+2023-03-14	514.5	47	normal day
+2023-06-02	514.0	48	normal day
+2022-06-14	513.7	49	normal day
+2023-05-09	513.5	50	normal day
+2023-08-18	510.56	51	normal day
+2022-10-14	509.5	52	normal day
+2022-04-12	505.0	53	normal day
+2023-06-09	500.5	54	normal day
+2022-10-25	498.0	55	normal day
+2022-05-06	497.0	56	normal day
+2022-05-24	496.0	57	normal day
+2022-10-04	495.0	58	normal day
+2022-07-05	494.77	59	normal day
+2022-05-10	494.5	60	normal day
+2022-04-19	493.5	61	normal day
+2023-03-10	492.5	62	normal day
+2022-06-03	492.1	63	normal day
+2023-07-11	488.7	64	normal day
+2022-05-20	487.5	65	normal day
+2022-11-01	486.0	66	normal day
+2022-11-08	482.5	67	normal day
+2023-06-13	482.0	68	normal day
+2022-05-13	480.0	69	normal day
+2023-03-28	477.5	70	normal day
+2023-06-20	476.1	71	normal day
+2022-08-26	475.34	72	normal day
+2022-04-05	475.0	73	normal day
+2023-07-28	473.85	74	normal day
+2022-12-13	472.5	75	normal day
+2022-09-30	471.67	76	normal day
+2022-08-19	470.52	77	normal day
+2022-07-15	468.38	78	normal day
+2022-06-28	468.1	79	normal day
+2023-05-05	466.5	80	normal day
+2022-11-11	458.5	81	normal day
+2022-09-06	458.09	82	normal day
+2023-03-31	456.0	83	normal day
+2022-04-22	455.5	84	normal day
+2022-10-11	455.5	84	normal day
+2023-07-07	454.58	86	normal day
+2023-03-24	453.5	87	normal day
+2023-07-21	452.09	88	normal day
+2022-08-05	450.89	89	normal day
+2022-06-10	449.0	90	normal day
+2022-12-16	448.5	91	normal day
+2023-09-01	448.41	92	normal day
+2022-10-18	448.0	93	normal day
+2023-07-18	446.96	94	normal day
+2022-08-09	445.61	95	normal day
+2023-09-29	444.7	96	normal day
+2022-04-29	444.5	97	normal day
+2023-05-30	441.0	98	normal day
+2022-06-24	440.5	99	normal day
+2023-05-19	440.0	100	normal day
+2023-07-14	433.6	101	normal day
+2022-05-17	432.5	102	normal day
+2023-05-23	430.5	103	normal day
+2022-09-27	429.37	104	normal day
+2023-03-17	429.0	105	normal day
+2022-06-21	428.7	106	normal day
+2022-07-12	426.22	107	normal day
+2022-08-12	425.17	108	normal day
+2023-09-26	421.22	109	normal day
+2023-08-25	419.5	110	normal day
+2022-09-20	419.36	111	normal day
+2022-11-15	416.5	112	normal day
+2022-09-23	415.68	113	normal day
+2023-08-08	413.43	114	normal day
+2023-04-25	406.5	115	normal day
+2023-06-23	403.5	116	normal day
+2023-06-06	398.0	117	normal day
+2022-07-26	396.54	118	normal day
+2022-05-27	384.5	119	normal day
+2022-09-09	381.05	120	normal day
+2023-05-16	379.5	121	normal day
+2023-04-11	379.0	122	normal day
+2022-04-15	377.0	123	normal day
+2022-08-02	375.83	124	normal day
+2023-05-02	374.0	125	normal day
+2022-06-07	370.5	126	normal day
+2023-05-26	368.5	127	normal day
+2023-07-04	366.25	128	normal day
+2022-04-26	366.0	129	normal day
+2023-03-07	364.5	130	normal day
+2023-08-04	363.62	131	normal day
+2023-09-08	359.85	132	normal day
+2023-08-01	353.66	133	normal day
+2023-07-25	352.19	134	normal day
+2023-04-04	349.0	135	normal day
+2023-04-14	342.0	136	normal day
+2022-08-23	336.91	137	normal day
+2023-09-15	321.12	138	normal day
+2023-04-18	310.5	139	normal day
+2023-04-28	305.5	140	normal day
+2023-04-21	283.0	141	normal day
+2023-04-07	272.5	142	worst day
+
+Execution finished without errors.
+Result: 142 rows returned in 22ms
+At line 12:
+SELECT * FROM temp_ranked_sales
+
+--3) Query the second temp table twice, once for the best day, once for the worst day, with a UNION binding them. 
+SELECT * FROM temp_ranked_sales WHERE day_description = 'best day'
+UNION
+SELECT * FROM temp_ranked_sales WHERE day_description = 'worst day'
+
+market_date	sales	sales_rank	day_description
+2022-12-20	979.0	1	best day
+2023-04-07	272.5	142	worst day
+
+Execution finished without errors.
+Result: 2 rows returned in 10ms
+At line 12:
+SELECT * FROM temp_ranked_sales WHERE day_description = 'best day'
+UNION
+SELECT * FROM temp_ranked_sales WHERE day_description = 'worst day'
