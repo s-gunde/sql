@@ -8619,3 +8619,73 @@ FROM customer_purchases
 
 
 
+-- String manipulations
+/* 1. Some product names in the product table have descriptions like "Jar" or "Organic". 
+These are separated from the product name with a hyphen. 
+Create a column using SUBSTR (and a couple of other commands) that captures these, but is otherwise NULL. 
+Remove any trailing or leading whitespaces. Don't just use a case statement for each product! 
+
+| product_name               | description |
+|----------------------------|-------------|
+| Habanero Peppers - Organic | Organic     |
+
+Hint: you might need to use INSTR(product_name,'-') to find the hyphens. INSTR will help split the column. */
+
+SELECT product_name, IIF(INSTR(product_name, '-')= 0, NULL, TRIM(SUBSTR(product_name, INSTR(product_name, '-') + 1))) AS description
+FROM product
+
+product_name	description
+Habanero Peppers - Organic	Organic
+Jalapeno Peppers - Organic	Organic
+Poblano Peppers - Organic	Organic
+Banana Peppers - Jar	Jar
+Whole Wheat Bread	
+Cut Zinnias Bouquet	
+Apple Pie	
+Sweet Potatoes	
+Eggs	
+Pork Chops	
+Baby Salad Lettuce Mix - Bag	Bag
+Baby Salad Lettuce Mix	
+Red Potatoes	
+Red Potatoes - Small	Small
+Sweet Corn	
+Carrots	
+Carrots - Organic	Organic
+Farmer''s Market Resuable Shopping Bag	
+Homemade Beeswax Candles	
+Organic Cherry Tomatoes	
+Roma Tomatoes	
+Maple Syrup - Jar	Jar
+Cherry Pie	
+
+Execution finished without errors.
+Result: 23 rows returned in 9ms
+At line 10:
+SELECT product_name, IIF(INSTR(product_name, '-')= 0, NULL, TRIM(SUBSTR(product_name, INSTR(product_name, '-') + 1))) AS description
+FROM product
+
+/* 2. Filter the query to show any product_size value that contain a number with REGEXP. */
+
+SELECT product_name, product_size, IIF(INSTR(product_name, '-')= 0, NULL, TRIM(SUBSTR(product_name, INSTR(product_name, '-') + 1))) AS description
+FROM product
+WHERE product_size REGEXP '[0-9]'
+
+Banana Peppers - Jar	8 oz	Jar
+Whole Wheat Bread	1.5 lbs	
+Apple Pie	10" 
+Eggs	1 dozen	
+Pork Chops	1 lb	
+Baby Salad Lettuce Mix - Bag	1/2 lb	Bag
+Baby Salad Lettuce Mix	1 lb	
+Homemade Beeswax Candles	6"	
+Maple Syrup - Jar	8 oz	Jar
+Cherry Pie	10"	
+
+Execution finished without errors.
+Result: 10 rows returned in 13ms
+At line 2:
+SELECT product_name, product_size, IIF(INSTR(product_name, '-')= 0, NULL, TRIM(SUBSTR(product_name, INSTR(product_name, '-') + 1))) AS description
+FROM product
+WHERE product_size REGEXP '[0-9]'
+
