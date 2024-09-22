@@ -9,6 +9,12 @@ Think a bit about the row counts: how many distinct vendors, product names are t
 How many customers are there (y). 
 Before your final group by you should have the product of those two queries (x*y).  */
 
+SELECT vendor.vendor_name, product.product_name, SUM (5 * vendor_inventory.original_price * customer.total_customers) AS total_price
+FROM vendor 
+JOIN vendor_inventory ON vendor.vendor_id = vendor_inventory.vendor_id
+JOIN product ON vendor_inventory.product_id = product.product_id
+CROSS JOIN ( SELECT COUNT(DISTINCT customer_id) AS total_customers FROM customer) AS customer
+GROUP BY vendor.vendor_name, product.product_name
 
 
 -- INSERT
@@ -19,7 +25,7 @@ Name the timestamp column `snapshot_timestamp`. */
 
 
 
-/*2. Using `INSERT`, add a new row to the product_units table (with an updated timestamp). 
+/*2. Using `INSERT`, add a new row to the product_units table (with an updated timestamp). 	
 This can be any product you desire (e.g. add another record for Apple Pie). */
 
 
