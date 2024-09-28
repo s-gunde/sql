@@ -25,7 +25,64 @@ _Hint, search type 1 vs type 2 slowly changing dimensions._
 
 Bonus: Are there privacy implications to this, why or why not?
 ```
-Your answer...
+Answer... 
+
+1. **Overwriting Changes (Type 1 Slowly Changing Dimension)**
+Table Name: CUSTOMER_ADDRESS
+
+Columns:
+
+customer_id (Primary Key)
+unit_number
+street
+city
+province
+zip_code
+country
+
+In this setup, whenever a customer’s address is updated, the system simply overwrites the old address with the new one. There's no record of the previous addresses.
+
+The table always shows the most up-to-date information.
+
+**Type:** This is a Type 1 Slowly Changing Dimension, where changes overwrite old data and no history is kept.
+
+2. Retaining Changes (Type 2 Slowly Changing Dimension)
+Table Name: CUSTOMER_ADDRESS_HISTORY
+
+Columns:
+
+customer_id (Primary Key)
+unit_number
+street
+city
+province
+zip_code
+country
+start_date (When the address became valid)
+end_date (When the address stopped being valid, or NULL if it’s still active)
+is_current (A flag to show if this is the most recent address)
+
+In this approach, every time a customer’s address changes, a new row is added with the updated details. The old address is kept, but it's marked as inactive with an end_date and is_current = False.
+
+This table shows all the past addresses of a customer.
+
+**Type:** This is a Type 2 Slowly Changing Dimension, where changes are tracked by adding new rows, preserving the history.
+
+**Privacy Implications**
+Type 1 (Overwriting Changes):
+
+**Privacy Concerns:** Since the old address gets overwritten, the system only keeps the latest information. This means less data is stored, but it can be an issue if someone makes a mistake or an unauthorized change because there's no way to see what the previous address was. Overall, it has fewer privacy concerns since there’s no history being saved.
+
+Type 2 (Retaining Changes):
+
+**Privacy Concerns:** Storing old addresses raises more privacy concerns. If an old address is sensitive (like when it relates to personal safety), keeping that information could be risky if the data is leaked or accessed without permission.
+
+Privacy laws, such as GDPR and CCPA, require that personal information, including addresses, be deleted upon request. With a Type 2 approach, this can be tricky if old addresses aren't easily removed.
+
+In both cases, strong security is important to protect customer data, but Type 2 has more privacy risks since it keeps historical information.
+
+
+
 ```
 
 ## Question 4
