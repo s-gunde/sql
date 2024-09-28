@@ -82,7 +82,6 @@ Privacy laws, such as GDPR and CCPA, require that personal information, includin
 In both cases, strong security is important to protect customer data, but Type 2 has more privacy risks since it keeps historical information.
 
 
-
 ```
 
 ## Question 4
@@ -90,8 +89,13 @@ Review the AdventureWorks Schema [here](https://imgur.com/a/u0m8fX6)
 
 Highlight at least two differences between it and your ERD. Would you change anything in yours?
 ```
-Your answer...
-```
+Answer...
+
+The main differences I noticed are that the AdventureWorks ERD is designed at a company-wide level, involving multiple departments and tables, while my bookstore ERD is much smaller and only focuses on tables related to book sales. To manage relationships across different departments, normalization is definitely needed to avoid redundant data and keep things consistent. My bookstore ERD doesn’t really follow a formal structure.
+
+I also saw that the AdventureWorks ERD includes sensitive info like customer addresses and payment details, and it uses SCD Type 2 to track historical data for addresses. In contrast, my bookstore ERD doesn’t use Type 2 SCD for customer addresses, and I didn’t include any sensitive payment information.
+
+Overall, the AdventureWorks ERD is much more complex compared to the bookstore ERD.
 
 # Criteria
 
